@@ -1,0 +1,6 @@
+#ifndef BLOCK_MEMORY_ALLOCATOR_H
+#define BLOCK_MEMORY_ALLOCATOR_H
+
+void test(int);
+
+#endif  // BLOCK_MEMORY_ALLOCATOR_H
