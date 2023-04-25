@@ -51,7 +51,7 @@ block_t* GetBlock(pool_t* aPool) {
   }
 
   newBlock->data =
-      (blockData_t*)(aPool->pool + newBlock->idx * aPool->blockSize);
+      (blockData_t*)((char*)aPool->pool + newBlock->idx * aPool->blockSize);
 
 unlock:
   aPool->interface.UnlockMutex();
@@ -65,7 +65,6 @@ void FreeBlock(pool_t* aPool, block_t* aBlock, char* err) {
   if (*err) {
     return;
   }
-  aPool->interface.FreeMemory(aBlock->data);
   aPool->interface.FreeMemory(aBlock);
 }
 
@@ -74,6 +73,12 @@ void FreeAllocator(pool_t* aPool, char* err) {
     *err = 1;
     return;
   }
+
+  FreeSimpleStack(aPool->freeBlockIdxStack, err);
+  if (*err) {
+    return;
+  }
+
   aPool->interface.FreeMemory(aPool->pool);
   aPool->interface.FreeMemory(aPool);
 }

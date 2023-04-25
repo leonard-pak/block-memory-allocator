@@ -5,7 +5,7 @@
 - [x] Allocate memory one block at a time of fixed size from static pool
 - [x] The block and pool size must be configurable at project build time
 - [ ] Adapted to work on Embedded platform of different sizes in a RTOS
-- [ ] Unit-tests
+- [x] Unit-tests
 - [ ] Only english
 
 ### 1. Allocate memory one block at a time of fixed size from static pool
@@ -27,5 +27,7 @@ TODO:
 
 ### 4. Unit-tests
 
-TODO GTest:
+GTest:
 1. Проверить аллокацию и высвобождение памяти
+2. Проверить реаллокацию блока после освобождения
+3. Проверить избыточную аллокацию

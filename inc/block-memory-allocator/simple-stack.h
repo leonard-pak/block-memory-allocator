@@ -18,5 +18,6 @@ simpleStack_t* InitSimpleStack(size_t, iMemory_t);
 void SimpleStackFastPush(simpleStack_t*, stackData_t);
 void SimpleStackPush(simpleStack_t*, stackData_t, char* err);
 stackData_t SimpleStackPop(simpleStack_t*, char* err);
+void FreeSimpleStack(simpleStack_t*, char* err);
 
 #endif  // BLOCK_MEMORY_ALLOCATOR_SIMPLE_STACK_H_

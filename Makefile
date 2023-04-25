@@ -6,6 +6,10 @@ MAKEFLAGS=--no-print-directory
 test: build/test
 	./build/tests/$(PROJECT)-tests
 
+.PHONY: test/valgrind
+test/valgrind: build/test
+	valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all build/tests/$(PROJECT)-tests
+
 .PHONY: build
 build:
 	mkdir -p build && \

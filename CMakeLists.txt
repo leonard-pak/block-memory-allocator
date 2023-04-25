@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.12)
 project(block-memory-allocator)
 
 option(BMA_BUILD_TESTS "Build block memory allocator tests" OFF)
-option(BMA_POOL_SIZE "Build block memory allocator tests" OFF)
-option(BMA_BLOCK_SIZE "Build block memory allocator tests" OFF)
+option(BMA_POOL_SIZE "Set pool size" OFF)
+option(BMA_BLOCK_SIZE "Set block size" OFF)
 
 add_library(${PROJECT_NAME})
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
@@ -35,5 +35,13 @@ if(BMA_BLOCK_SIZE)
 endif(BMA_BLOCK_SIZE)
 
 if(BMA_BUILD_TESTS)
+  target_compile_options(${PROJECT_NAME}
+    PUBLIC
+      -Wall
+      -Wpedantic
+      -Wextra
+      -Werror
+      -O0
+  )
   add_subdirectory(tests)
 endif(BMA_BUILD_TESTS)

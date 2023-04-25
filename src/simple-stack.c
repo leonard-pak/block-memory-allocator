@@ -39,3 +39,12 @@ stackData_t SimpleStackPop(simpleStack_t* aStack, char* err) {
   }
   return aStack->buffer[--aStack->endIdx];
 }
+
+void FreeSimpleStack(simpleStack_t* stack, char* err) {
+  if (!stack || !stack->buffer) {
+    *err = 1;
+    return;
+  }
+  stack->iMemory.FreeMemory(stack->buffer);
+  stack->iMemory.FreeMemory(stack);
+}
