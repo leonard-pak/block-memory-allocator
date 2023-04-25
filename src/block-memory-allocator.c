@@ -2,5 +2,5 @@
 #include <stdio.h>
 
 void test(int a) {
-  printf("hello: %d", a);
+  printf("hello: %d\n", a);
 }

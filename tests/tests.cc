@@ -2,7 +2,8 @@ extern "C" {
 #include "block-memory-allocator/block-memory-allocator.h"
 }
 
-int main() {
-  test(49);
-  return 0;
+#include "gtest/gtest.h"
+
+TEST(Tests, Test) {
+  EXPECT_EQ(1, 1);
 }
