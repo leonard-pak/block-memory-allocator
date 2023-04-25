@@ -17,7 +17,7 @@ build:
 build/test: clean
 	mkdir -p build && \
 	cd build && \
-	cmake -DBLOCK_MEMORY_ALLOC_BUILD_TESTS=ON .. && \
+	cmake -DBMA_BUILD_TESTS=ON .. && \
 	$(MAKE)
 
 .PHONY: clean
