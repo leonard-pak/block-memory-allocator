@@ -7,13 +7,12 @@ extern "C" {
 
 TEST(BlockMemoryAllocator, TestInitilization) {
   iCtrl_t iCtrl;
-  iCtrl.CaptureMemory = malloc;
-  iCtrl.FreeMemory = free;
+  iCtrl.Alloc = malloc;
+  iCtrl.Free = free;
   iCtrl.LockMutex = []() {};
   iCtrl.UnlockMutex = []() {};
   pool_t* memoryPool = InitAllocator(iCtrl);
   ASSERT_NE(memoryPool, nullptr);
-
   char err = 0;
   FreeAllocator(memoryPool, &err);
   ASSERT_FALSE(err);
@@ -21,8 +20,8 @@ TEST(BlockMemoryAllocator, TestInitilization) {
 
 TEST(BlockMemoryAllocator, TestSimpleAllocation) {
   iCtrl_t iCtrl;
-  iCtrl.CaptureMemory = malloc;
-  iCtrl.FreeMemory = free;
+  iCtrl.Alloc = malloc;
+  iCtrl.Free = free;
   iCtrl.LockMutex = []() {};
   iCtrl.UnlockMutex = []() {};
   pool_t* memoryPool = InitAllocator(iCtrl);
@@ -47,8 +46,8 @@ TEST(BlockMemoryAllocator, TestSimpleAllocation) {
 
 TEST(BlockMemoryAllocator, TestReAllocation) {
   iCtrl_t iCtrl;
-  iCtrl.CaptureMemory = malloc;
-  iCtrl.FreeMemory = free;
+  iCtrl.Alloc = malloc;
+  iCtrl.Free = free;
   iCtrl.LockMutex = []() {};
   iCtrl.UnlockMutex = []() {};
   pool_t* memoryPool = InitAllocator(iCtrl);
@@ -81,8 +80,8 @@ TEST(BlockMemoryAllocator, TestReAllocation) {
 
 TEST(BlockMemoryAllocator, TestOverAllocation) {
   iCtrl_t iCtrl;
-  iCtrl.CaptureMemory = malloc;
-  iCtrl.FreeMemory = free;
+  iCtrl.Alloc = malloc;
+  iCtrl.Free = free;
   iCtrl.LockMutex = []() {};
   iCtrl.UnlockMutex = []() {};
   pool_t* memoryPool = InitAllocator(iCtrl);

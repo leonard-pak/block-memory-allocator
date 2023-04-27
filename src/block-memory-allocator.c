@@ -4,19 +4,19 @@ pool_t* InitAllocator(iCtrl_t aAllocInterface) {
   size_t blockCount = BMA_POOL_SIZE / BMA_BLOCK_SIZE;
   size_t alignedPoolSize = BMA_BLOCK_SIZE * blockCount;
 
-  pool_t* pool = (pool_t*)aAllocInterface.CaptureMemory(sizeof(pool_t));
+  pool_t* pool = (pool_t*)aAllocInterface.Alloc(sizeof(pool_t));
   if (!pool) {
     return NULL;
   }
 
   iMemory_t iMemory;
-  iMemory.CaptureMemory = aAllocInterface.CaptureMemory;
-  iMemory.FreeMemory = aAllocInterface.FreeMemory;
+  iMemory.Alloc = aAllocInterface.Alloc;
+  iMemory.Free = aAllocInterface.Free;
 
   pool->freeBlockIdxStack = InitSimpleStack(blockCount, iMemory);
-  pool->pool = aAllocInterface.CaptureMemory(alignedPoolSize);
+  pool->pool = aAllocInterface.Alloc(alignedPoolSize);
   if (!pool->pool) {
-    aAllocInterface.FreeMemory(pool);
+    aAllocInterface.Free(pool);
     return NULL;
   }
 
@@ -37,7 +37,7 @@ block_t* GetBlock(pool_t* aPool) {
   if (!aPool) {
     goto unlock;
   }
-  newBlock = (block_t*)aPool->interface.CaptureMemory(sizeof(block_t));
+  newBlock = (block_t*)aPool->interface.Alloc(sizeof(block_t));
   if (!newBlock) {
     goto unlock;
   }
@@ -45,7 +45,7 @@ block_t* GetBlock(pool_t* aPool) {
   char err = 0;
   newBlock->idx = SimpleStackPop(aPool->freeBlockIdxStack, &err);
   if (err) {
-    aPool->interface.FreeMemory(newBlock);
+    aPool->interface.Free(newBlock);
     newBlock = NULL;
     goto unlock;
   }
@@ -65,7 +65,7 @@ void FreeBlock(pool_t* aPool, block_t* aBlock, char* err) {
   if (*err) {
     return;
   }
-  aPool->interface.FreeMemory(aBlock);
+  aPool->interface.Free(aBlock);
 }
 
 void FreeAllocator(pool_t* aPool, char* err) {
@@ -79,6 +79,6 @@ void FreeAllocator(pool_t* aPool, char* err) {
     return;
   }
 
-  aPool->interface.FreeMemory(aPool->pool);
-  aPool->interface.FreeMemory(aPool);
+  aPool->interface.Free(aPool->pool);
+  aPool->interface.Free(aPool);
 }
