@@ -1,28 +1,27 @@
 #include "block-memory-allocator/block-memory-allocator.h"
 
-pool_t* InitAllocator(iCtrl_t aAllocInterface) {
+pool_t* BlockMallocInitPool(iCtrl_t aIControl) {
   size_t blockCount = BMA_POOL_SIZE / BMA_BLOCK_SIZE;
   size_t alignedPoolSize = BMA_BLOCK_SIZE * blockCount;
 
-  pool_t* pool = (pool_t*)aAllocInterface.Alloc(sizeof(pool_t));
+  pool_t* pool = (pool_t*)aIControl.Alloc(sizeof(pool_t));
   if (!pool) {
     return NULL;
   }
 
   iMemory_t iMemory;
-  iMemory.Alloc = aAllocInterface.Alloc;
-  iMemory.Free = aAllocInterface.Free;
+  iMemory.Alloc = aIControl.Alloc;
+  iMemory.Free = aIControl.Free;
 
   pool->freeBlockIdxStack = InitSimpleStack(blockCount, iMemory);
-  pool->pool = aAllocInterface.Alloc(alignedPoolSize);
+  pool->pool = aIControl.Alloc(alignedPoolSize);
   if (!pool->pool) {
-    aAllocInterface.Free(pool);
+    aIControl.Free(pool);
     return NULL;
   }
 
-  pool->blockSize = BMA_BLOCK_SIZE;
   pool->poolSize = alignedPoolSize;
-  pool->interface = aAllocInterface;
+  pool->control = aIControl;
 
   for (size_t i = 0; i < blockCount; ++i) {
     SimpleStackFastPush(pool->freeBlockIdxStack, i);
@@ -31,13 +30,13 @@ pool_t* InitAllocator(iCtrl_t aAllocInterface) {
   return pool;
 }
 
-block_t* GetBlock(pool_t* aPool) {
+block_t* BlockMallocGetBlock(pool_t* aPool) {
   block_t* newBlock = NULL;
-  aPool->interface.LockMutex();
+  aPool->control.LockMutex();
   if (!aPool) {
     goto unlock;
   }
-  newBlock = (block_t*)aPool->interface.Alloc(sizeof(block_t));
+  newBlock = (block_t*)aPool->control.Alloc(sizeof(block_t));
   if (!newBlock) {
     goto unlock;
   }
@@ -45,40 +44,40 @@ block_t* GetBlock(pool_t* aPool) {
   char err = 0;
   newBlock->idx = SimpleStackPop(aPool->freeBlockIdxStack, &err);
   if (err) {
-    aPool->interface.Free(newBlock);
+    aPool->control.Free(newBlock);
     newBlock = NULL;
     goto unlock;
   }
 
   newBlock->data =
-      (blockData_t*)((char*)aPool->pool + newBlock->idx * aPool->blockSize);
+      (blockData_t*)((char*)aPool->pool + newBlock->idx * BMA_BLOCK_SIZE);
 
 unlock:
-  aPool->interface.UnlockMutex();
+  aPool->control.UnlockMutex();
   return newBlock;
 }
 
-void FreeBlock(pool_t* aPool, block_t* aBlock, char* err) {
-  aPool->interface.LockMutex();
-  SimpleStackPush(aPool->freeBlockIdxStack, aBlock->idx, err);
-  aPool->interface.UnlockMutex();
-  if (*err) {
+void BlockMallocFreeBlock(pool_t* aPool, block_t* aBlock, char* aErr) {
+  aPool->control.LockMutex();
+  SimpleStackPush(aPool->freeBlockIdxStack, aBlock->idx, aErr);
+  aPool->control.UnlockMutex();
+  if (*aErr) {
     return;
   }
-  aPool->interface.Free(aBlock);
+  aPool->control.Free(aBlock);
 }
 
-void FreeAllocator(pool_t* aPool, char* err) {
+void BlockMallocFreePool(pool_t* aPool, char* aErr) {
   if (!aPool || !aPool->pool) {
-    *err = 1;
+    *aErr = 1;
     return;
   }
 
-  FreeSimpleStack(aPool->freeBlockIdxStack, err);
-  if (*err) {
+  FreeSimpleStack(aPool->freeBlockIdxStack, aErr);
+  if (*aErr) {
     return;
   }
 
-  aPool->interface.Free(aPool->pool);
-  aPool->interface.Free(aPool);
+  aPool->control.Free(aPool->pool);
+  aPool->control.Free(aPool);
 }

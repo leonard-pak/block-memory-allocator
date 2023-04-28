@@ -41,7 +41,6 @@ if(BMA_BUILD_TESTS)
       -Wpedantic
       -Wextra
       -Werror
-      -O0
   )
   add_subdirectory(tests)
 endif(BMA_BUILD_TESTS)

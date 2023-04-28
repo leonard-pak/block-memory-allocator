@@ -18,29 +18,29 @@ simpleStack_t* InitSimpleStack(size_t aSize, iMemory_t aIMemory) {
   return stack;
 }
 
-void SimpleStackFastPush(simpleStack_t* aStack, stackData_t data) {
-  aStack->buffer[aStack->endIdx++] = data;
+void SimpleStackFastPush(simpleStack_t* aStack, stackData_t aData) {
+  aStack->buffer[aStack->endIdx++] = aData;
 }
 
-void SimpleStackPush(simpleStack_t* aStack, stackData_t data, char* err) {
+void SimpleStackPush(simpleStack_t* aStack, stackData_t aData, char* aErr) {
   if (!aStack || aStack->endIdx == aStack->size) {
-    *err = 1;
+    *aErr = 1;
     return;
   }
-  aStack->buffer[aStack->endIdx++] = data;
+  aStack->buffer[aStack->endIdx++] = aData;
 }
 
-stackData_t SimpleStackPop(simpleStack_t* aStack, char* err) {
+stackData_t SimpleStackPop(simpleStack_t* aStack, char* aErr) {
   if (!aStack || aStack->endIdx == 0) {
-    *err = 1;
+    *aErr = 1;
     return 0;
   }
   return aStack->buffer[--aStack->endIdx];
 }
 
-void FreeSimpleStack(simpleStack_t* stack, char* err) {
+void FreeSimpleStack(simpleStack_t* stack, char* aErr) {
   if (!stack || !stack->buffer) {
-    *err = 1;
+    *aErr = 1;
     return;
   }
   stack->iMemory.Free(stack->buffer);

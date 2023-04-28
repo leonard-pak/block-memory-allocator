@@ -6,10 +6,11 @@
 #include "block-memory-allocator/interface.h"
 #include "block-memory-allocator/simple-stack.h"
 
+#ifndef BMA_BLOCK_SIZE
 #ifndef __SIZE_WIDTH__
+#error Must to set __SIZE_WIDTH__ marco as the platform bit size
 #endif  // __SIZE_WIDTH__
 
-#ifndef BMA_BLOCK_SIZE
 #define BMA_BLOCK_SIZE (__SIZE_WIDTH__ / 8)
 #endif  // BMA_BLOCK_SIZE
 
@@ -17,6 +18,10 @@
 #define BMA_POOL_SIZE BMA_BLOCK_SIZE
 #endif  // BMA_POOL_SIZE
 
+/**
+ * @brief Type of allocated block data
+ *
+ */
 #if BMA_BLOCK_SIZE == 1
 typedef char blockData_t;
 #elif BMA_BLOCK_SIZE == 2
@@ -29,22 +34,58 @@ typedef __UINT64_TYPE__ blockData_t;
 typedef void blockData_t;
 #endif  // Set block data type
 
+/**
+ * @brief Structure of the allocated block
+ *
+ */
 typedef struct {
-  blockData_t* data;
-  size_t idx;
+  blockData_t* data;  ///< Pointer to the allocated block
+  size_t idx;         ///< Index in the pool
 } block_t;
 
+/**
+ * @brief Structure of the initialized pool
+ *
+ */
 typedef struct {
-  void* pool;
-  simpleStack_t* freeBlockIdxStack;
-  size_t blockSize;
-  size_t poolSize;
-  iCtrl_t interface;
+  void* pool;                        ///< Pointer to the allocated pool
+  simpleStack_t* freeBlockIdxStack;  ///< Pointer to the stack storing the free
+                                     ///< block indices
+  size_t poolSize;                   ///< Size of the aligned pool
+  iCtrl_t control;                   ///< Store pointers to control functions
 } pool_t;
 
-pool_t* InitAllocator(iCtrl_t);
-block_t* GetBlock(pool_t*);
-void FreeBlock(pool_t*, block_t*, char*);
-void FreeAllocator(pool_t*, char*);
+/**
+ * @brief Initializing the pool
+ *
+ * @param aIControl - Store pointers to control functions
+ * @return pool_t* - Pointer to a structure of the allocated pool
+ */
+pool_t* BlockMallocInitPool(iCtrl_t aIControl);
+
+/**
+ * @brief Getting one block from the allocated pool
+ *
+ * @param aPool - Pointer to the allocated pool
+ * @return block_t* - Pointer to the block structure
+ */
+block_t* BlockMallocGetBlock(pool_t* aPool);
+
+/**
+ * @brief Releasing the allocated block in the pool
+ *
+ * @param aPool - Pointer to the allocated pool
+ * @param aBlock - - Pointer to the allocated block
+ * @param aErr - Pointer to the returned error
+ */
+void BlockMallocFreeBlock(pool_t* aPool, block_t* aBlock, char* aErr);
+
+/**
+ * @brief Releasing the allocated pool
+ *
+ * @param aPool - Pointer to the allocated pool
+ * @param aErr - Pointer to the returned error
+ */
+void BlockMallocFreePool(pool_t* aPool, char* aErr);
 
 #endif  // BLOCK_MEMORY_ALLOCATOR_H_
