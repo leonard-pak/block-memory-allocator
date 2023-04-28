@@ -4,30 +4,34 @@
 
 - [x] Allocate memory one block at a time of fixed size from static pool
 - [x] The block and pool size must be configurable at project build time
-- [ ] Adapted to work on Embedded platform of different sizes in a RTOS
+- [x] Adapted to work on Embedded platform of different sizes in a RTOS
 - [x] Unit-tests
-- [ ] Only english
 
-### 1. Allocate memory one block at a time of fixed size from static pool
+### Description
 
-1. Инициализации памяти
-2. Выделения памяти
-3. Освобождения памяти
+C language library of block memory allocator with pool.
 
-### 2. The block and pool size must be configurable at project build time
+### Features:
 
-1. Сделать через макросы и добавить флаги в систему сборки
+- Interface for external implementation of memory allocation and freeing (must be thread/task safety if use in a RTOS)
+- Interface for external implementation of mutex locking and unlocking for using in a RTOS
+- Using the stack to manage free blocks
+- Use the **BMA_BLOCK_SIZE** and **BMA_POOL_SIZE** options to set block and pool size during project building
+- Internal implementation uses the **\_\_SIZE_WIDTH__** macro to get the platform bitsize
+- Non pointer returned functions have an error pointer arguments to return error status:
+  - if function returns with error, the error argument will be set to `1`
+  - if function does not return with an error, the error argument will not be changed
 
-### 3. Adapted to work on Embedded platform of different sizes in a RTOS
+> For more details see the comments in the header files. You can see an example of use in the tests.
 
-TODO:
-1. Добавить проверку на этапе компияции размерности системы. Подготовить тип блока в соответствии с его размером, если блок укладываетсяв размер системы.
-2. Добавить при инициализации интрефейс для прокидывания управлением мьютексом, чтобы предостеречь конкурентный доступ.
-3. Добавить при инициализации интрефейс для прокидывания функций по управлению памятью.
+### Makefile
 
-### 4. Unit-tests
-
-GTest:
-1. Проверить аллокацию и высвобождение памяти
-2. Проверить реаллокацию блока после освобождения
-3. Проверить избыточную аллокацию
+- Running tests
+``` bash
+make test
+make test/valgrind # for starting with valgrind
+```
+- Build
+``` bash
+make build
+```
