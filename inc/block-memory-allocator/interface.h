@@ -13,6 +13,7 @@ typedef void (*voidFunc_t)(void);
  * @brief Interface of the memory allocation function
  *
  * @param aSize - Allocated memory size in bytes
+ * @return void* - Pointer to the allocated memory
  */
 typedef void* (*allocFunc_t)(size_t aSize);
 
