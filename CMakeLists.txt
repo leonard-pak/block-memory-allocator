@@ -10,8 +10,8 @@ add_library(${PROJECT_NAME})
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 file(GLOB SOURCES
-  src/block-memory-allocator.c
-  src/simple-stack.c
+  src/block.cc
+  src/allocator.cc
 )
 
 target_sources(${PROJECT_NAME}

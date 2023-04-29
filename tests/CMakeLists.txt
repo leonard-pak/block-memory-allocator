@@ -19,6 +19,7 @@ target_link_libraries(${PROJECT_NAME}
   PRIVATE
     block-memory-allocator::block-memory-allocator
     gtest_main
+    gmock_main
 )
 
 target_compile_options(${PROJECT_NAME}

@@ -21,7 +21,7 @@ build:
 build/test: clean
 	mkdir -p build && \
 	cd build && \
-	cmake -DBMA_BUILD_TESTS=ON .. && \
+	cmake -DBMA_BUILD_TESTS=ON -DBMA_POOL_SIZE=1025 .. && \
 	$(MAKE)
 
 .PHONY: clean
