@@ -86,7 +86,7 @@ TEST(BlockMemoryAllocator, TestSingleBlockAllocation) {
  * @brief Testing all blocks allocation and release
  *
  */
-TEST(BlockMemoryAllocator, TestSingleBlockAllocationRelease) {
+TEST(BlockMemoryAllocator, TestBlocksAllocationRelease) {
   void* poolPtr = malloc(BMA_BLOCK_SIZE * (BMA_POOL_SIZE / BMA_BLOCK_SIZE));
 
   auto mockController = std::make_unique<MockController>();
@@ -98,7 +98,7 @@ TEST(BlockMemoryAllocator, TestSingleBlockAllocationRelease) {
   EXPECT_CALL(*mockController, UnlockMutex()).Times(AnyNumber());
 
   auto allocator = bma::Allocator(std::move(mockController));
-  auto blockCount = bma::Allocator::kPoolSize / BMA_BLOCK_SIZE;
+  auto const blockCount = bma::Allocator::kPoolSize / BMA_BLOCK_SIZE;
 
   {
     auto blocks = std::vector<std::unique_ptr<bma::Block>>();
@@ -136,7 +136,7 @@ TEST(BlockMemoryAllocator, TestReAllocationSingleBlock) {
   EXPECT_CALL(*mockController, UnlockMutex()).Times(AnyNumber());
 
   auto allocator = bma::Allocator(std::move(mockController));
-  auto blockCount = bma::Allocator::kPoolSize / BMA_BLOCK_SIZE;
+  auto const blockCount = bma::Allocator::kPoolSize / BMA_BLOCK_SIZE;
 
   auto blocks = std::vector<std::unique_ptr<bma::Block>>();
   for (size_t i = 0; i < blockCount; ++i) {
@@ -171,7 +171,7 @@ TEST(BlockMemoryAllocator, TestOverAllocation) {
   EXPECT_CALL(*mockController, UnlockMutex()).Times(AnyNumber());
 
   auto allocator = bma::Allocator(std::move(mockController));
-  auto blockCount = bma::Allocator::kPoolSize / BMA_BLOCK_SIZE;
+  auto const blockCount = bma::Allocator::kPoolSize / BMA_BLOCK_SIZE;
 
   auto blocks = std::vector<std::unique_ptr<bma::Block>>();
   for (size_t i = 0; i < blockCount; ++i) {

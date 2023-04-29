@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.12)
 
 project(block-memory-allocator)
 
+set(CMAKE_CXX_STANDARD 17)
+
 option(BMA_BUILD_TESTS "Build block memory allocator tests" OFF)
 option(BMA_POOL_SIZE "Set pool size" OFF)
 option(BMA_BLOCK_SIZE "Set block size" OFF)
