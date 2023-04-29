@@ -9,18 +9,15 @@
 
 ### Description
 
-C language library of block memory allocator with pool.
+C++ language library of block memory allocator with pool.
 
 ### Features:
 
-- Interface for external implementation of memory allocation and freeing (must be thread/task safety if use in a RTOS)
-- Interface for external implementation of mutex locking and unlocking for using in a RTOS
-- Using the stack to manage free blocks
+- Abstract class **IController** for external implementation thread-safety malloc/free function and mutex locking/unlocking for using in a RTOS
+- Using the **std::stack** to manage free blocks
 - Use the **BMA_BLOCK_SIZE** and **BMA_POOL_SIZE** options to set block and pool size during project building
 - Internal implementation uses the **\_\_SIZE_WIDTH__** macro to get the platform bitsize
-- Non pointer returned functions have an error pointer arguments to return error status:
-  - if function returns with error, the error argument will be set to `1`
-  - if function does not return with an error, the error argument will not be changed
+- The size of the allocated pool is equalized by the size of the block to the smaller side of the BMA_POOL_SIZE macro
 
 > For more details see the comments in the header files. You can see an example of use in the tests.
 
